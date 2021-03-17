@@ -1,6 +1,8 @@
-import React, { Component } from "react"; 
+import React, { Component } from 'react'; 
+import axios from "axios";
 import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css"
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 class CreateExercise extends Component {
     constructor(props) {
@@ -23,10 +25,16 @@ class CreateExercise extends Component {
 
     //lifecycle method
     componentDidMount(){
-        this.setState({
-            user :['test user'],
-            username: 'testuser'
-        })
+        axios.get('http://localhost:5000/users')
+            .then(response => {
+                if (response.data.length > 0){
+                    this.setState({
+                        users: response.data.map(user => user.username),
+                        username: response.data[0].username
+                    })
+                }
+            })
+        
     }
 
     onChangeUsername(e){
@@ -60,7 +68,10 @@ class CreateExercise extends Component {
             date: this.state.date
         }
 
-        console.log(exercise)
+        console.log(exercise);
+
+        axios.post('http://localhost:5000/exercises/add', exercise)
+         .then(res => console.log(res.data)); //promise
         
         window.location = '/';
 
@@ -68,21 +79,21 @@ class CreateExercise extends Component {
 
   render() {
     return (
-     <div>
+     <div className="container">
        <h3>Create New Exercise Log</h3>
        <form onSubmit = {this.onSubmit}>
            <div className = "form-group">
            <label>Username : </label>
-           <select ref = "userInput"
-                required
+           <select ref="userInput"
                 className="form-control"
                 value={this.state.username}
                 onChange = {this.onChangeUsername} >
             {
                 this.state.users.map(function(user){
-                    return<option
+                    return <option
                     key={user}
-                    value={user}>{user}
+                    value={user}>
+                    {user}
                     </option>;
                 })
             }

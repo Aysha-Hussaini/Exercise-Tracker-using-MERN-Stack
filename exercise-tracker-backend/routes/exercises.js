@@ -2,7 +2,7 @@
 const router = require('express').Router();
 let Exercise = require('../models/exercise.model');
 
-//get exercises in database
+//get exercises from database
 router.route('/').get((req, res) => {
     Exercise.find()
         .then( exercise => res.json(exercise))
